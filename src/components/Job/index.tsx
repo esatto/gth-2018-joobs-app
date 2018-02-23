@@ -1,81 +1,114 @@
 import React from 'react';
 import styled from 'styled-components/native';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, Dimensions } from 'react-native';
 import { JobAd } from '../../types/Job';
-import { colors } from '../../config/styles';
+import { colors, dimensions } from '../../config/styles';
 import { formatDistanceStrict } from 'date-fns/esm';
 
-const margin = 15;
+const { width } = Dimensions.get('screen');
 
-const JobWrapper = styled.View``;
-
-const JobInner = styled.View`
-  padding-top: ${margin};
-  padding-bottom: ${margin};
+const JobWrapper = styled.View`
+  padding-top: ${dimensions.margin};
+  padding-bottom: ${dimensions.margin};
   display: flex;
   flex-direction: row;
 `;
 
+const Content = styled.View`
+  padding: 0 ${dimensions.margin}px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: ${width};
+`;
+
 const Title = styled.Text`
-  font-size: 16;
+  font-size: 18;
+  font-weight: 900;
+  margin-bottom: 8;
+  flex: 1;
+  color: #444444;
+`;
+
+const Rating = styled.Text`
+  width: 50;
+  font-size: 21;
+  font-weight: 400;
+  color: ${colors.primary};
+  text-align: right;
+`;
+
+const Metadata = styled.View`
+  padding: 0 ${dimensions.margin}px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-end;
+`;
+
+const WorkplaceName = styled.Text`
+  margin-right: ${dimensions.margin};
+  flex: 1;
+  color: ${colors.primary};
   font-weight: bold;
-  font-family: 'Avenir';
+`;
+
+const WorkplaceInfo = styled.Text`
+  color: ${colors.foreground2};
+  text-align: right;
+  font-weight: 400;
 `;
 
 const BorderBottom = styled.View`
   height: 1;
   width: 100%;
-  background-color: #aaa;
-  margin-top: ${margin};
+  background-color: #cccccc;
+  margin-top: ${dimensions.margin};
   position: absolute;
   bottom: 0;
   right: 0;
 `;
 
-const Content = styled.View`
-  padding: 0 10px;
-  flex: 1;
-`;
-
-const Rating = styled.Text`
-  width: 50;
-  font-size: 20;
-  color: ${colors.primary};
-`;
-
 export interface JobProps {
   ad: JobAd;
-  onPress: () => void;
+  onPress?: () => void;
+  disableLine?: boolean;
+  margin?: number;
 }
 
 export class Job extends React.Component<JobProps> {
   render() {
-    const { ad, onPress } = this.props;
+    const { ad, onPress, disableLine } = this.props;
 
     const { arbetsplatsnamn } = ad.arbetsplats;
 
-    const ansokningsDag = ad.ansokan.sista_ansokningsdag || '';
+    const ansokningsDag = ad.ansokan.sista_ansokningsdag;
 
-    const timeLeft = formatDistanceStrict(ansokningsDag, new Date());
+    const timeLeft =
+      ansokningsDag != null
+        ? formatDistanceStrict(ansokningsDag, new Date())
+        : null;
 
-    const rand = Math.floor(Math.random() * 100);
+    const TouchWrapper = onPress ? TouchableOpacity : View;
 
     return (
       <JobWrapper>
-        <TouchableOpacity onPress={onPress}>
-          <JobInner>
-            <Content>
-              <Title>{ad.annons.annonsrubrik}</Title>
-              <Text>
-                {arbetsplatsnamn} {timeLeft} kvar
-              </Text>
-            </Content>
+        <TouchWrapper onPress={onPress}>
+          <Content>
+            <Title>{ad.annons.yrkesbenamning}</Title>
             <Rating>
-              <Text>{rand}%</Text>
+              <Text>{ad.extra.percentage}%</Text>
             </Rating>
-          </JobInner>
-        </TouchableOpacity>
-        <BorderBottom />
+          </Content>
+          <Metadata>
+            <WorkplaceName>{arbetsplatsnamn}</WorkplaceName>
+            <WorkplaceInfo>
+              {ad.villkor.arbetstid}, {ad.annons.kommunnamn}
+            </WorkplaceInfo>
+          </Metadata>
+        </TouchWrapper>
+        {!disableLine && <BorderBottom />}
       </JobWrapper>
     );
   }

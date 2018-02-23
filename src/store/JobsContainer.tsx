@@ -2,8 +2,6 @@ import { Container } from 'unstated';
 import { JobAd } from '../types/Job';
 import { getJobsByCounty } from '../api/jobs';
 
-import { arrayToObjectWithId } from './utils/arrayToObjectById';
-
 export interface JobsState {
   byId: { [key: string]: JobAd };
   ids: string[];
@@ -13,8 +11,16 @@ export interface JobsState {
 const convertJob = (jobs: JobAd[]) => {
   const obj: { [id: string]: JobAd } = {};
 
+  const min = 50;
+  const max = 97;
+
   for (const job of jobs) {
-    obj[job.annons.annonsid] = job;
+    obj[job.annons.annonsid] = {
+      ...job,
+      extra: {
+        percentage: Math.floor(Math.random() * (max - min + 1) + min),
+      },
+    };
   }
 
   return obj;

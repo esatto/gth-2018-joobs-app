@@ -14,7 +14,7 @@ export class JobsScreen extends React.Component<JobsProps> {
 
   gotoJob = (job: JobAd) => {
     const id = job.annons.annonsid;
-    const title = job.annons.annonsrubrik;
+    const title = job.annons.yrkesbenamning;
     this.props.navigation.navigate('Job', { id, title });
   };
 

@@ -7,9 +7,17 @@ import { JobAd } from '../../types/Job';
 import { Job } from '../Job';
 import { Marker } from 'react-native-maps';
 import { differenceInMilliseconds } from 'date-fns/esm';
+import { mapTheme } from './mapTheme';
+
+const mapHeight = 250;
 
 const Map = styled(MapView)`
-  height: 200;
+  height: ${mapHeight};
+`;
+
+const Wrapper = styled.View`
+  background-color: #fff;
+  flex: 1;
 `;
 
 const ActivityWrapper = styled.View`
@@ -40,23 +48,12 @@ export class JobsView extends React.Component<JobsViewProps> {
 
     const ads = jobs.state.ids
       .map(id => jobs.state.byId[id])
-      .sort((a, b) =>
-        differenceInMilliseconds(
-          b.annons.publiceraddatum,
-          a.annons.publiceraddatum,
-        ),
-      );
-
-    const scale = scrollY.interpolate({
-      inputRange: [-100, 0],
-      outputRange: [1.5, 1],
-      extrapolateRight: 'clamp',
-    });
+      .filter(item => item.arbetsplats.arbetsplatsnamn.length < 30)
+      .sort((a, b) => b.extra.percentage - a.extra.percentage);
 
     const translateY = scrollY.interpolate({
-      inputRange: [-100, 0],
-      outputRange: [-50, 0],
-      extrapolateRight: 'clamp',
+      inputRange: [0, mapHeight],
+      outputRange: [0, mapHeight - 100],
     });
 
     const markers = ads.filter(item => !!item.adLocation.lat).map(item => {
@@ -70,17 +67,36 @@ export class JobsView extends React.Component<JobsViewProps> {
       };
     });
 
+    const defaultData = markers[0]
+      ? markers[0].coords
+      : { latitude: 0, longitude: 0 };
+
+    const marker = {
+      ...defaultData,
+      latitudeDelta: 3,
+      longitudeDelta: 3,
+    };
+
     return (
       <Animated.ScrollView
-        scrollEventThrottle={16}
+        scrollEventThrottle={10}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
           { useNativeDriver: true },
         )}
-        style={{ flex: 1 }}
+        style={{ flex: 1, backgroundColor: '#ffffff' }}
       >
-        <Animated.View style={{ transform: [{ scale }, { translateY }] }}>
-          <Map>
+        <Animated.View
+          style={{
+            transform: [{ translateY }],
+          }}
+        >
+          <Map
+            customMapStyle={mapTheme}
+            provider="google"
+            showsUserLocation={true}
+            region={marker}
+          >
             {markers.map(marker => (
               <Marker
                 coordinate={marker.coords}
@@ -91,16 +107,18 @@ export class JobsView extends React.Component<JobsViewProps> {
             ))}
           </Map>
         </Animated.View>
-        {jobs.state.loading && (
-          <ActivityWrapper>
-            <ActivityIndicator />
-          </ActivityWrapper>
-        )}
-        <FlatList
-          renderItem={this.renderItem}
-          data={ads}
-          keyExtractor={(item: JobAd) => item.annons.annonsid}
-        />
+        <Wrapper>
+          {jobs.state.loading && (
+            <ActivityWrapper>
+              <ActivityIndicator />
+            </ActivityWrapper>
+          )}
+          <FlatList
+            renderItem={this.renderItem}
+            data={ads}
+            keyExtractor={(item: JobAd) => item.annons.annonsid}
+          />
+        </Wrapper>
       </Animated.ScrollView>
     );
   }

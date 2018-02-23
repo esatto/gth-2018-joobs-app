@@ -5,7 +5,7 @@ interface StatsProps {}
 
 export class StatsScreen extends React.Component<StatsProps> {
   static navigationOptions = {
-    title: 'Statistik',
+    title: 'Trender',
   };
 
   render() {

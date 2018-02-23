@@ -51,6 +51,9 @@ export interface Workplace {
 
 export interface Demand {
   egenbil: boolean;
+  korkortslista?: {
+    korkortstyp: string[];
+  };
 }
 
 export interface AdLocation {
@@ -65,4 +68,7 @@ export interface JobAd {
   arbetsplats: Workplace;
   krav: Demand;
   adLocation: AdLocation;
+  extra: {
+    percentage: number;
+  };
 }

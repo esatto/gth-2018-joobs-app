@@ -1,6 +1,6 @@
 import React from 'react';
 import { StatusBar } from 'react-native';
-import { TabNavigator, StackNavigator } from 'react-navigation';
+import { TabNavigator, StackNavigator, TabBarBottom } from 'react-navigation';
 import Feather from 'react-native-vector-icons/Feather';
 import { Provider } from 'unstated';
 
@@ -10,6 +10,7 @@ import { StartScreen } from '../screens/StartScreen';
 import ProfileTab from '../tabs/ProfileTab';
 import StatsTab from '../tabs/StatsTab';
 import CareerTab from '../tabs/CareerTab';
+import { colors } from '../config/styles';
 
 const iconMap: { [key: string]: string } = {
   Jobs: 'briefcase',
@@ -34,7 +35,14 @@ const Navigator = TabNavigator(
     Career: { screen: CareerTab },
     Stats: { screen: StatsTab },
   },
-  { navigationOptions: navigationOptions as any },
+  {
+    navigationOptions: navigationOptions as any,
+    tabBarOptions: {
+      activeTintColor: colors.primary,
+    },
+    tabBarComponent: TabBarBottom,
+    tabBarPosition: 'bottom',
+  },
 );
 
 const RootNavigator = StackNavigator(

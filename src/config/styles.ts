@@ -6,8 +6,8 @@ export const colors = {
   background2: '#ff0000',
   background3: '#000',
   foreground: '#fff',
-  foreground2: '#F5F4F4',
-  inactive: 'gray',
+  foreground2: '#999999',
+  inactive: '#999999',
 };
 
 export const defaultHeaderStyle: StackNavigatorConfig = {
@@ -17,4 +17,8 @@ export const defaultHeaderStyle: StackNavigatorConfig = {
       backgroundColor: colors.primary,
     },
   },
+};
+
+export const dimensions = {
+  margin: 20,
 };
