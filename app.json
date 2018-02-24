@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Joobs",
-    "description": "Joobs",
+    "name": "Joobs - Good Tech Hack 2018 / Esatto",
+    "description": "Esattos entry in Good Tech Hack 2018.",
     "slug": "esatto-joobs",
     "privacy": "public",
     "sdkVersion": "25.0.0",
